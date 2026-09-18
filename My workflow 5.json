@@ -1,0 +1,666 @@
+{
+  "name": "My workflow 5",
+  "nodes": [
+    {
+      "parameters": {
+        "formId": "LZL5AJ"
+      },
+      "type": "n8n-nodes-tallyforms.tallyTrigger",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "2fc124ab-8541-4de7-b11f-82f54dc00730",
+      "name": "Tally Trigger",
+      "webhookId": "3f94b111-df6c-4051-b04c-661e868dec5b",
+      "credentials": {
+        "tallyApi": {
+          "id": "Dpk4Xj9shqjX2ozo",
+          "name": "Tally account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1eBfn8XXSnjVyTTAnPUr9qqwwqZGU0uIVVzf6pKnD_wE",
+          "mode": "list",
+          "cachedResultName": "Student DB",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1eBfn8XXSnjVyTTAnPUr9qqwwqZGU0uIVVzf6pKnD_wE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1eBfn8XXSnjVyTTAnPUr9qqwwqZGU0uIVVzf6pKnD_wE/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Background Data": "={{ $json.question_WMANYL.value }}",
+            "Email": "={{ $json.question_e7B62J.value }}",
+            "Name": "={{ $json.question_9EdWvK.value }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Background Data",
+              "displayName": "Background Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        0
+      ],
+      "id": "ae418050-6503-4bc7-b39d-5f4b13448a87",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "6oLKTxWYo7YplQQs",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an assistant responsible for creating random pairings from an incoming user list.\n\nINSTRUCTIONS:\n1. Extract all person objects from the incoming \"data\" array (including Name, Email, and Background Data).\n2. Shuffle or randomize the order of the list.\n3. Pair the individuals into groups of 2. \n   - If there is an odd number of people, create one group of 3 (or add the extra person to an existing pair).\n4. Output the final pairings cleanly, listing Group #, the names, emails, and background info for each pair.\n\nINPUT DATA:\n{{ $json.data }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        448,
+        0
+      ],
+      "id": "4ed3dc7f-1a19-45e4-a348-98d34f0420e1",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        320,
+        208
+      ],
+      "id": "8c90146c-98b3-4838-b6c5-1cdd55818391",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "H3LkKg8oor9wdlVM",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        608,
+        208
+      ],
+      "id": "13f58919-2aa1-4e37-8bd7-94e45c3ad921",
+      "name": "Send a message in Gmail",
+      "webhookId": "b06f6208-d1b0-4173-9a42-f85989a00cfc",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "WObbiaESFuOALwiG",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batchSize": 5,
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        320,
+        624
+      ],
+      "id": "b7986ed8-30b4-421d-be1a-fa9783ec934c",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1eBfn8XXSnjVyTTAnPUr9qqwwqZGU0uIVVzf6pKnD_wE",
+          "mode": "list",
+          "cachedResultName": "Student DB",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1eBfn8XXSnjVyTTAnPUr9qqwwqZGU0uIVVzf6pKnD_wE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1eBfn8XXSnjVyTTAnPUr9qqwwqZGU0uIVVzf6pKnD_wE/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        496,
+        848
+      ],
+      "id": "a4ec030f-a633-4a4c-a346-a8b2f1b1aafd",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "6oLKTxWYo7YplQQs",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        560
+      ],
+      "id": "face2a2b-0e10-4a4f-9629-f7186b5b09ba",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        592,
+        624
+      ],
+      "id": "24c09273-c869-4485-aee4-8c3c6ece69c7",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Automatically extract array items regardless of property names\nconst rawData = $input.first().json;\nconst items = Array.isArray(rawData) ? rawData : (rawData.data || Object.values(rawData)[0]);\n\n// 1. Fisher-Yates Shuffle Algorithm (True Randomization)\nfor (let i = items.length - 1; i > 0; i--) {\n  const j = Math.floor(Math.random() * (i + 1));\n  [items[i], items[j]] = [items[j], items[i]];\n}\n\n// 2. Dynamically Pair Items into Groups of 2\nconst pairedGroups = [];\nconst groupSize = 2;\n\nfor (let i = 0; i < items.length; i += groupSize) {\n  const chunk = items.slice(i, i + groupSize);\n  \n  // If 1 leftover person remains, append them to the previous group\n  if (chunk.length === 1 && pairedGroups.length > 0) {\n    pairedGroups[pairedGroups.length - 1].members.push(chunk[0]);\n  } else {\n    pairedGroups.push({\n      group_id: pairedGroups.length + 1,\n      total_members: chunk.length,\n      members: chunk\n    });\n  }\n}\n\n// 3. Output for downstream n8n nodes / AI Agent\nreturn [{ json: { groups: pairedGroups } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        816,
+        624
+      ],
+      "id": "c817027c-3e12-40b9-8fc4-38a2107e3cf3",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1088,
+        528
+      ],
+      "id": "e8d15866-d958-4696-ad80-39308fb128a1",
+      "name": "Append row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "6oLKTxWYo7YplQQs",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1120,
+        1056
+      ],
+      "id": "8dd5dbf7-f99a-42e2-8024-b5b60683adbd",
+      "name": "Append row in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "6oLKTxWYo7YplQQs",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1312,
+        528
+      ],
+      "id": "cd7fe855-1d79-4ce1-9dd9-d44c0144ab98",
+      "name": "Send a message",
+      "webhookId": "6f64a085-02a2-4e6b-a78d-cbdd3b6bfbb0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "WObbiaESFuOALwiG",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1088,
+        704
+      ],
+      "id": "da5d7d40-b97b-4a86-887c-6b9c4a804c88",
+      "name": "Append row in sheet3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "6oLKTxWYo7YplQQs",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1312,
+        704
+      ],
+      "id": "0ad59bc5-9f86-42be-a7b3-1cc2c7eaad8e",
+      "name": "Send a message1",
+      "webhookId": "6f64a085-02a2-4e6b-a78d-cbdd3b6bfbb0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "WObbiaESFuOALwiG",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1376,
+        864
+      ],
+      "id": "77827caa-15c7-407b-885a-ef87d86aaa27",
+      "name": "Send a message2",
+      "webhookId": "6f64a085-02a2-4e6b-a78d-cbdd3b6bfbb0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "WObbiaESFuOALwiG",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1120,
+        880
+      ],
+      "id": "bdb983df-6db5-4153-ba15-033dd05b3dcf",
+      "name": "Append row in sheet4",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "6oLKTxWYo7YplQQs",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1360,
+        1072
+      ],
+      "id": "afa033b6-c1f4-469c-9fe9-5aa47af9033f",
+      "name": "Send a message3",
+      "webhookId": "6f64a085-02a2-4e6b-a78d-cbdd3b6bfbb0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "WObbiaESFuOALwiG",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1776,
+        800
+      ],
+      "id": "f752c42a-415e-4710-8cb2-f4be4c284080",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.4,
+      "position": [
+        1792,
+        1008
+      ],
+      "id": "2eaa44ff-027f-4689-8895-c3de0504cb56",
+      "name": "Postgres Chat Memory"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Tally Trigger": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Append row in sheet3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Append row in sheet4",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Append row in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet3": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet2": {
+      "main": [
+        [
+          {
+            "node": "Send a message3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet4": {
+      "main": [
+        [
+          {
+            "node": "Send a message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "f5bbc07a-352e-49b0-9c91-d93030a0d69a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8f1e1f14dfec367f144a2e86b40abdeb055252b44ff2368723319e1a59b44299"
+  },
+  "nodeGroups": [],
+  "id": "tV9iS7CW68yjox6M",
+  "tags": []
+}
